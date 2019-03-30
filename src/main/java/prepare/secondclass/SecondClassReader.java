@@ -16,10 +16,14 @@ import util.XmlParser;
  *
  */
 public class SecondClassReader {
+	private static List<SecondClass> secondClassList;
 
 	@SuppressWarnings("unchecked")
-	public static List<SecondClass> getSecondClassLIst() {
-		List<SecondClass> secondClasseList = new ArrayList<>();
+	public static List<SecondClass> getSecondClassList() {
+		if (secondClassList != null) {
+			return secondClassList;
+		}
+		secondClassList = new ArrayList<>();
 		File[] listFiles = new File(Constants.RESOURCES_BASE_PATH, "/class/second/list").listFiles();
 		for (File listFile : listFiles) {
 			Element listRootElement = XmlParser.getRootElement(listFile);
@@ -34,17 +38,10 @@ public class SecondClassReader {
 				String categoryDesc = element.element("categoryDesc").getText();
 				int count = Integer.parseInt(countRootElement.element("record" + i).getText());
 				SecondClass secondClass = new SecondClass(id, parentId, name, categoryDesc, count);
-				secondClasseList.add(secondClass);
+				secondClassList.add(secondClass);
 			}
 		}
-		return secondClasseList;
+		return secondClassList;
 	}
 
-	public static void main(String[] args) {
-		List<SecondClass> secondClassLIst = getSecondClassLIst();
-		System.out.println(secondClassLIst.size());
-		for (SecondClass secondClass : secondClassLIst) {
-			System.out.println(secondClass);
-		}
-	}
 }

@@ -1,6 +1,10 @@
 package crawl.bookinfo;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+
+import org.apache.commons.io.FileUtils;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -8,7 +12,10 @@ import com.google.gson.JsonParser;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
+import us.codecraft.webmagic.downloader.HttpClientDownloader;
 import us.codecraft.webmagic.processor.PageProcessor;
+import us.codecraft.webmagic.proxy.Proxy;
+import us.codecraft.webmagic.proxy.SimpleProxyProvider;
 import us.codecraft.webmagic.scheduler.FileCacheQueueScheduler;
 import us.codecraft.webmagic.selector.Selectable;
 import util.Constants;
@@ -43,20 +50,23 @@ public class CrawlBookInfo implements PageProcessor {
 			JsonObject info = jsonObject.get("holdingList").getAsJsonArray().get(0).getAsJsonObject();
 			String barcode = info.get("barcode").getAsString();
 			System.out.println(barcode);
+			try {
+				FileUtils.write(new File(Constants.RESOURCES_BASE_PATH, "/barcode"), barcode, Constants.CHARSET, true);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
 	public static void main(String[] args) {
 		Spider spider = Spider.create(new CrawlBookInfo());
+		HttpClientDownloader downloader = new HttpClientDownloader();
+		downloader.setProxyProvider(SimpleProxyProvider.from(new Proxy("101.101.101.101", 8888)));
+		spider.setDownloader(downloader);
 		spider.thread(5);
-		spider.setScheduler(new FileCacheQueueScheduler(""));
-		spider.addUrl(
-				"http://60.218.184.234:8091/opac/search?q=I0&searchType=standard&isFacet=false&view=simple&searchWay=class&rows=10&sortWay=score&sortOrder=desc&searchWay0=marc&logical0=AND&page=1");
+		spider.setScheduler(
+				new FileCacheQueueScheduler(new File(Constants.RESOURCES_BASE_PATH, "/mission/urlList").getPath()));
 		spider.run();
-	}
-
-	public void crawlBookRecNo() {
-		// http://60.218.184.234:8091/opac/search?isFacet=false&view=simple&searchWay=class&q=I0&classname=I0%E6%96%87%E5%AD%A6%E7%90%86%E8%AE%BA&libcode=&booktype=&curlocal=
 	}
 
 }
