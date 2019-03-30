@@ -2,6 +2,7 @@ package crawl.bookinfo;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -16,10 +17,11 @@ import us.codecraft.webmagic.downloader.HttpClientDownloader;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.proxy.Proxy;
 import us.codecraft.webmagic.proxy.SimpleProxyProvider;
-import us.codecraft.webmagic.scheduler.FileCacheQueueScheduler;
 import us.codecraft.webmagic.selector.Selectable;
 import util.Constants;
 import util.HttpUtil;
+import util.proxy.ProxyIp;
+import util.proxy.ProxyPoolReader;
 
 /**
  * 爬书的信息
@@ -51,7 +53,8 @@ public class CrawlBookInfo implements PageProcessor {
 			String barcode = info.get("barcode").getAsString();
 			System.out.println(barcode);
 			try {
-				FileUtils.write(new File(Constants.RESOURCES_BASE_PATH, "/barcode"), barcode, Constants.CHARSET, true);
+				FileUtils.write(new File(Constants.RESOURCES_BASE_PATH, "/barcode"), barcode + "\n", Constants.CHARSET,
+						true);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -61,11 +64,16 @@ public class CrawlBookInfo implements PageProcessor {
 	public static void main(String[] args) {
 		Spider spider = Spider.create(new CrawlBookInfo());
 		HttpClientDownloader downloader = new HttpClientDownloader();
-		downloader.setProxyProvider(SimpleProxyProvider.from(new Proxy("101.101.101.101", 8888)));
+		List<ProxyIp> proxyIpList = ProxyPoolReader.getProxyIpList();
+		List<Proxy> proxies = new ArrayList<>();
+		for (ProxyIp proxyIp : proxyIpList) {
+			proxies.add(new Proxy(proxyIp.getIp(), proxyIp.getPort()));
+		}
+		downloader.setProxyProvider(SimpleProxyProvider.from(proxies.toArray(new Proxy[proxies.size()])));
 		spider.setDownloader(downloader);
 		spider.thread(5);
-		spider.setScheduler(
-				new FileCacheQueueScheduler(new File(Constants.RESOURCES_BASE_PATH, "/mission/urlList").getPath()));
+		List<String> urlList = UrlReader.getUrlList();
+		spider.addUrl(urlList.toArray(new String[urlList.size()]));
 		spider.run();
 	}
 
