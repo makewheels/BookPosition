@@ -1,0 +1,32 @@
+package util;
+
+import java.io.File;
+
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
+
+/**
+ * xml解析器
+ * 
+ * @author Administrator
+ *
+ */
+public class XmlParser {
+
+	/**
+	 * 返回根节点
+	 * 
+	 * @param file
+	 * @return
+	 */
+	public static Element getRootElement(File file) {
+		try {
+			return new SAXReader().read(file).getRootElement();
+		} catch (DocumentException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+}

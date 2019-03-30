@@ -1,13 +1,22 @@
 package util;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 /**
@@ -29,6 +38,7 @@ public class HttpUtil {
 		CloseableHttpClient client = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet(url);
 		httpGet.addHeader("User-Agent", userAgent);
+		httpGet.setHeader("Content-type", "application/x-www-form-urlencoded");
 		CloseableHttpResponse response = null;
 		try {
 			response = client.execute(httpGet);
@@ -44,4 +54,42 @@ public class HttpUtil {
 		return null;
 	}
 
+	/**
+	 * 发送post请求
+	 * 
+	 * @param url
+	 * @return
+	 */
+	public static String post(String url, Map<String, String> param) {
+		CloseableHttpClient client = HttpClients.createDefault();
+		HttpPost httpPost = new HttpPost(url);
+		// 装填参数
+		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		if (param != null) {
+			for (Entry<String, String> entry : param.entrySet()) {
+				nvps.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+			}
+		}
+		// 设置参数到请求对象中
+		try {
+			httpPost.setEntity(new UrlEncodedFormEntity(nvps));
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}
+		httpPost.setHeader("User-Agent", userAgent);
+		httpPost.setHeader("Content-type", "application/x-www-form-urlencoded");
+		String body = null;
+		try {
+			CloseableHttpResponse response = client.execute(httpPost);
+			HttpEntity entity = response.getEntity();
+			if (entity != null) {
+				body = EntityUtils.toString(entity);
+			}
+			EntityUtils.consume(entity);
+			response.close();
+		} catch (ParseException | IOException e) {
+			e.printStackTrace();
+		}
+		return body;
+	}
 }
