@@ -39,7 +39,7 @@ public class ProxyPoolReader {
 			String[] split = line.split(":");
 			String ip = split[0];
 			int port = Integer.parseInt(split[1]);
-			proxyIpList.add(new ProxyIp());
+			proxyIpList.add(new ProxyIp(ip, port));
 		}
 		return proxyIpList;
 	}

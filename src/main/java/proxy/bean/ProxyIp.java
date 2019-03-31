@@ -21,6 +21,12 @@ public class ProxyIp {
 		super();
 	}
 
+	public ProxyIp(String ip, Integer port) {
+		super();
+		this.ip = ip;
+		this.port = port;
+	}
+
 	public ProxyIp(String ip, Integer port, String address, Boolean isAnonymous, String type, Long speed,
 			Long connectTime, Long aliveTime, Long validateTime) {
 		super();

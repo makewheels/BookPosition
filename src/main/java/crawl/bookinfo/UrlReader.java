@@ -6,18 +6,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
 
+import crawl.bean.BookListUrl;
 import util.Constants;
+import util.HibernateUtil;
 
 public class UrlReader {
 	private static List<String> urlList;
 
 	/**
-	 * 返回所有url
+	 * 从本地文件读url列表
 	 * 
 	 * @return
 	 */
-	public static List<String> getUrlList() {
+	public static List<String> fromLocalFile() {
 		if (urlList != null) {
 			return urlList;
 		}
@@ -29,6 +33,19 @@ public class UrlReader {
 			e.printStackTrace();
 		}
 		return urlList;
+	}
+
+	/**
+	 * 从数据库读url列表
+	 * 
+	 * @param isCrawled 是否已经爬过
+	 * @return
+	 */
+	public static List<BookListUrl> fromDatabase(boolean isCrawled) {
+		Session session = HibernateUtil.getSession();
+		Query<BookListUrl> query = session.createQuery("from BookListUrl where isCrawled=?1", BookListUrl.class);
+		query.setParameter(1, false);
+		return query.list();
 	}
 
 }

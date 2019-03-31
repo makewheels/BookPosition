@@ -1,12 +1,25 @@
 package crawl.bean;
 
+import java.util.Date;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 /**
  * 书
  * 
  * @author Administrator
  *
  */
+@Entity
+@Table(name = "book")
 public class Book {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
 	private String no;// 在二级分类下的序号
 	private String isbn;// isbn
 	private String coverImageUrl;// 封面图片url
@@ -18,14 +31,18 @@ public class Book {
 	private String type;// 文献类型
 	private String callno;// 索书号
 	private String barCode;// 条码号
+	private Date createDate;
+	private String fromUrl;
 
 	public Book() {
 		super();
 	}
 
-	public Book(String no, String isbn, String coverImageUrl, String name, String bookrecno, String author,
-			String publisher, String publishDate, String type, String callno, String barCode) {
+	public Book(Integer id, String no, String isbn, String coverImageUrl, String name, String bookrecno, String author,
+			String publisher, String publishDate, String type, String callno, String barCode, Date createDate,
+			String fromUrl) {
 		super();
+		this.id = id;
 		this.no = no;
 		this.isbn = isbn;
 		this.coverImageUrl = coverImageUrl;
@@ -37,6 +54,16 @@ public class Book {
 		this.type = type;
 		this.callno = callno;
 		this.barCode = barCode;
+		this.createDate = createDate;
+		this.fromUrl = fromUrl;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	public String getNo() {
@@ -127,11 +154,27 @@ public class Book {
 		this.barCode = barCode;
 	}
 
-	@Override
-	public String toString() {
-		return "Book [no=" + no + ", isbn=" + isbn + ", coverImageUrl=" + coverImageUrl + ", name=" + name
-				+ ", bookrecno=" + bookrecno + ", author=" + author + ", publisher=" + publisher + ", publishDate="
-				+ publishDate + ", type=" + type + ", callno=" + callno + ", barCode=" + barCode + "]";
+	public Date getCreateDate() {
+		return createDate;
 	}
 
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
+	public String getFromUrl() {
+		return fromUrl;
+	}
+
+	public void setFromUrl(String fromUrl) {
+		this.fromUrl = fromUrl;
+	}
+
+	@Override
+	public String toString() {
+		return "Book [id=" + id + ", no=" + no + ", isbn=" + isbn + ", coverImageUrl=" + coverImageUrl + ", name="
+				+ name + ", bookrecno=" + bookrecno + ", author=" + author + ", publisher=" + publisher
+				+ ", publishDate=" + publishDate + ", type=" + type + ", callno=" + callno + ", barCode=" + barCode
+				+ ", createDate=" + createDate + ", fromUrl=" + fromUrl + "]";
+	}
 }

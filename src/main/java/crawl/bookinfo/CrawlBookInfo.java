@@ -3,6 +3,7 @@ package crawl.bookinfo;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,10 +12,12 @@ import org.jsoup.select.Elements;
 import org.junit.Test;
 
 import crawl.BookHelper;
-import crawl.CrawlUtil;
 import crawl.bean.Book;
+import crawl.bean.BookListUrl;
 import us.codecraft.xsoup.Xsoup;
 import util.Constants;
+import util.CrawlUtil;
+import util.HibernateUtil;
 import util.XmlParser;
 
 /**
@@ -60,8 +63,8 @@ public class CrawlBookInfo {
 			}
 			Element div3 = bookMetaDiv.child(3);
 			String type = StringUtils.substringBetween(div3.ownText(), "文献类型:", ", 索书号:").trim();
-			Book book = new Book(no, isbn, coverImageUrl, name, bookrecno, author, publisher, publishDate, type, null,
-					null);
+			Book book = new Book(null, no, isbn, coverImageUrl, name, bookrecno, author, publisher, publishDate, type,
+					null, null, null, null);
 			bookList.add(book);
 		}
 		// 再发请求，获取索书号
@@ -92,10 +95,9 @@ public class CrawlBookInfo {
 			}
 		}
 		// 根据recno查条码号
-		for (Book book : bookList) {
-			String barCode = BookHelper.getBarCodeByRecno(book.getBookrecno());
-			book.setBarCode(barCode);
-		}
+//		for (Book book : bookList) {
+//			book.setBarCode(BookHelper.getBarCodeByRecno(book.getBookrecno()));
+//		}
 		return bookList;
 
 	}
@@ -105,13 +107,31 @@ public class CrawlBookInfo {
 	 */
 	@Test
 	public void crawl() {
-		List<String> urlList = UrlReader.getUrlList();
-		String url = urlList.get(0);
-		String html = null;
-		html = CrawlUtil.get(url);
-		List<Book> bookList = parseHtmlToBookList(html);
-		for (Book book : bookList) {
-			System.out.println(book);
+		int pageCount = 0;
+		int bookCount = 0;
+		// 拿到未爬的url列表
+		List<BookListUrl> bookListUrls = UrlReader.fromDatabase(false);
+		// 遍历每一个url
+		for (BookListUrl bookListUrl : bookListUrls) {
+			String url = bookListUrl.getUrl();
+			// 发请求
+			String html = CrawlUtil.get(url);
+			// 解析html
+			List<Book> bookList = parseHtmlToBookList(html);
+			// 遍历每一个book
+			for (Book book : bookList) {
+				// 保存book
+				book.setCreateDate(new Date());
+				book.setFromUrl(url);
+				HibernateUtil.save(book);
+				bookCount++;
+				// 更新bookListUrl
+				bookListUrl.setIsCrawled(true);
+				bookListUrl.setCrawlDate(new Date());
+				HibernateUtil.update(bookListUrl);
+			}
+			pageCount++;
+			System.err.println("pageCount = " + pageCount + " bookCount = " + bookCount);
 		}
 	}
 

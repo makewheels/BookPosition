@@ -1,7 +1,9 @@
 package crawl;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 
 import util.Constants;
 import util.HttpUtil;
@@ -21,11 +23,20 @@ public class BookHelper {
 	 * @return
 	 */
 	public static String getBarCodeByRecno(String recno) {
-		String json = HttpUtil.get(Constants.BASE_URL_EXTERNAL + "/opac/api/holding/" + recno);
-		JsonParser jsonParser = new JsonParser();
-		JsonObject jsonObject = jsonParser.parse(json).getAsJsonObject();
-		JsonObject info = jsonObject.get("holdingList").getAsJsonArray().get(0).getAsJsonObject();
-		return info.get("barcode").getAsString();
+		try {
+			String json = HttpUtil.get(Constants.BASE_URL_EXTERNAL + "/opac/api/holding/" + recno);
+			JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
+			JsonArray holdingList = jsonObject.get("holdingList").getAsJsonArray();
+			if (holdingList.size() == 0) {
+				return null;
+			} else {
+				JsonObject info = holdingList.get(0).getAsJsonObject();
+				return info.get("barcode").getAsString();
+			}
+		} catch (JsonSyntaxException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }
