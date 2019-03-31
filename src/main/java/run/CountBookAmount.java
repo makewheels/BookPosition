@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.junit.Test;
 
-import prepare.secondclass.SecondClass;
 import prepare.secondclass.SecondClassReader;
+import prepare.secondclass.bean.SecondClass;
 
 /**
  * 统计书总数

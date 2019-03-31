@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.dom4j.Element;
 
+import prepare.secondclass.bean.SecondClass;
 import util.Constants;
 import util.XmlParser;
 
@@ -26,10 +27,10 @@ public class SecondClassReader {
 		secondClassList = new ArrayList<>();
 		File[] listFiles = new File(Constants.RESOURCES_BASE_PATH, "/class/second/list").listFiles();
 		for (File listFile : listFiles) {
-			Element listRootElement = XmlParser.getRootElement(listFile);
+			Element listRootElement = XmlParser.parseFile(listFile);
 			List<Element> elements = listRootElement.elements();
 			File countFile = new File(Constants.RESOURCES_BASE_PATH, "/class/second/count/" + listFile.getName());
-			Element countRootElement = XmlParser.getRootElement(countFile);
+			Element countRootElement = XmlParser.parseFile(countFile);
 			for (int i = 0; i < elements.size(); i++) {
 				Element element = elements.get(i);
 				String id = element.element("id").getText();

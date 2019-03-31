@@ -1,4 +1,4 @@
-package prepare.secondclass;
+package prepare.secondclass.bean;
 
 /**
  * 二级分类对象

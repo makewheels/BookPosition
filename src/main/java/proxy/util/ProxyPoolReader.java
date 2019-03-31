@@ -1,4 +1,4 @@
-package util.proxy;
+package proxy.util;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
+import proxy.bean.ProxyIp;
 import util.Constants;
 
 /**
@@ -38,7 +39,7 @@ public class ProxyPoolReader {
 			String[] split = line.split(":");
 			String ip = split[0];
 			int port = Integer.parseInt(split[1]);
-			proxyIpList.add(new ProxyIp(ip, port));
+			proxyIpList.add(new ProxyIp());
 		}
 		return proxyIpList;
 	}

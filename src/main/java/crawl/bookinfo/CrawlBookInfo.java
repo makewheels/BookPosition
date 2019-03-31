@@ -1,80 +1,118 @@
 package crawl.bookinfo;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.junit.Test;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import us.codecraft.webmagic.Page;
-import us.codecraft.webmagic.Site;
-import us.codecraft.webmagic.Spider;
-import us.codecraft.webmagic.downloader.HttpClientDownloader;
-import us.codecraft.webmagic.processor.PageProcessor;
-import us.codecraft.webmagic.proxy.Proxy;
-import us.codecraft.webmagic.proxy.SimpleProxyProvider;
-import us.codecraft.webmagic.selector.Selectable;
+import crawl.BookHelper;
+import crawl.CrawlUtil;
+import crawl.bean.Book;
+import us.codecraft.xsoup.Xsoup;
 import util.Constants;
-import util.HttpUtil;
-import util.proxy.ProxyIp;
-import util.proxy.ProxyPoolReader;
+import util.XmlParser;
 
 /**
- * 爬书的信息
+ * 爬书详情
  * 
  * @author Administrator
  *
  */
-public class CrawlBookInfo implements PageProcessor {
-	private Site site = Site.me().setRetryTimes(3);
+public class CrawlBookInfo {
 
-	@Override
-	public Site getSite() {
-		return site;
-	}
-
-	@Override
-	public void process(Page page) {
-		Selectable tbody = page.getHtml().xpath("//*[@id=\"resultTile\"]/div[2]/table/tbody");
-		List<Selectable> trs = tbody.$("tbody>tr").nodes();
-		for (Selectable tr : trs) {
-			List<Selectable> tds = tr.$("tr>td").nodes();
-			Selectable td1 = tds.get(1);
-			String bookrecno = td1.$("td>div", "bookrecno").get();
-			// 拿到bookrecno之后，请求api拿条码号
-			String jsonString = HttpUtil.get(Constants.BASE_URL_EXTERNAL + "/opac/api/holding/" + bookrecno);
-			JsonParser jsonParser = new JsonParser();
-			JsonObject jsonObject = jsonParser.parse(jsonString).getAsJsonObject();
-			JsonObject info = jsonObject.get("holdingList").getAsJsonArray().get(0).getAsJsonObject();
-			String barcode = info.get("barcode").getAsString();
-			System.out.println(barcode);
-			try {
-				FileUtils.write(new File(Constants.RESOURCES_BASE_PATH, "/barcode"), barcode + "\n", Constants.CHARSET,
-						true);
-			} catch (IOException e) {
-				e.printStackTrace();
+	/**
+	 * 从html解析出book列表
+	 * 
+	 * @param html
+	 */
+	@SuppressWarnings("unchecked")
+	private List<Book> parseHtmlToBookList(String html) {
+		Elements trs = Xsoup.select(html, "//*[@id=\"resultTile\"]/div[2]/table/tbody").getElements().get(0).children();
+		List<Book> bookList = new ArrayList<>();
+		for (Element tr : trs) {
+			Element image = tr.child(0).child(0).child(0);
+			String coverImageUrl = image.attr("src");
+			if (coverImageUrl.contains(";jsessionid=")) {
+				coverImageUrl = coverImageUrl.substring(0, coverImageUrl.indexOf(";jsessionid="));
+			}
+			String isbn = image.attr("isbn");
+			Element bookMetaDiv = tr.child(1).child(0);
+			String bookrecno = bookMetaDiv.attr("bookrecno");
+			Element div0 = bookMetaDiv.child(0);
+			String no = div0.ownText();
+			if (no.endsWith(" .")) {
+				no = no.substring(0, no.length() - 2);
+			}
+			String name = div0.child(0).child(0).text();
+			Element div1 = bookMetaDiv.child(1);
+			String author = div1.child(0).text();
+			Element div2 = bookMetaDiv.child(2);
+			String publisher = div2.child(0).text();
+			String publishDate = div2.ownText();
+			if (publishDate.contains("出版日期:")) {
+				publishDate = publishDate.substring(publishDate.lastIndexOf("出版日期:") + 5, publishDate.length());
+				publishDate = publishDate.trim();
+			}
+			Element div3 = bookMetaDiv.child(3);
+			String type = StringUtils.substringBetween(div3.ownText(), "文献类型:", ", 索书号:").trim();
+			Book book = new Book(no, isbn, coverImageUrl, name, bookrecno, author, publisher, publishDate, type, null,
+					null);
+			bookList.add(book);
+		}
+		// 再发请求，获取索书号
+		StringBuilder bookrecnos = new StringBuilder();
+		for (Book book : bookList) {
+			bookrecnos.append(book.getBookrecno() + ",");
+		}
+		bookrecnos.deleteCharAt(bookrecnos.length() - 1);
+		String xml = null;
+		try {
+			xml = CrawlUtil.get(Constants.BASE_URL_EXTERNAL + "/opac/book/callnos?bookrecnos="
+					+ URLEncoder.encode(bookrecnos.toString(), Constants.CHARSET));
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}
+		// 解析xml
+		List<org.dom4j.Element> records = XmlParser.parseText(xml).elements();
+		// 设置到每一个book中
+		for (int i = 0; i < bookList.size(); i++) {
+			Book book = bookList.get(i);
+			String bookrecno = book.getBookrecno();
+			for (org.dom4j.Element record : records) {
+				if (bookrecno.equals(record.element("bookrecno").getText())) {
+					String callno = record.element("callno").getText();
+					book.setCallno(callno);
+					break;
+				}
 			}
 		}
+		// 根据recno查条码号
+		for (Book book : bookList) {
+			String barCode = BookHelper.getBarCodeByRecno(book.getBookrecno());
+			book.setBarCode(barCode);
+		}
+		return bookList;
+
 	}
 
-	public static void main(String[] args) {
-		Spider spider = Spider.create(new CrawlBookInfo());
-		HttpClientDownloader downloader = new HttpClientDownloader();
-		List<ProxyIp> proxyIpList = ProxyPoolReader.getProxyIpList();
-		List<Proxy> proxies = new ArrayList<>();
-		for (ProxyIp proxyIp : proxyIpList) {
-			proxies.add(new Proxy(proxyIp.getIp(), proxyIp.getPort()));
-		}
-		downloader.setProxyProvider(SimpleProxyProvider.from(proxies.toArray(new Proxy[proxies.size()])));
-		spider.setDownloader(downloader);
-		spider.thread(5);
+	/**
+	 * 爬书的列表页
+	 */
+	@Test
+	public void crawl() {
 		List<String> urlList = UrlReader.getUrlList();
-		spider.addUrl(urlList.toArray(new String[urlList.size()]));
-		spider.run();
+		String url = urlList.get(0);
+		String html = null;
+		html = CrawlUtil.get(url);
+		List<Book> bookList = parseHtmlToBookList(html);
+		for (Book book : bookList) {
+			System.out.println(book);
+		}
 	}
 
 }

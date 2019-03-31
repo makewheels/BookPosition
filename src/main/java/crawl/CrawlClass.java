@@ -59,7 +59,7 @@ public class CrawlClass {
 					new File(Constants.RESOURCES_BASE_PATH + "/class/second/list/" + secondClassId + ".xml"),
 					secondClassXml, Constants.CHARSET);
 			System.out.println(secondClassId + " " + secondClassXml);
-			Thread.sleep(Constants.WAIT_MILLIS);
+			Thread.sleep(Constants.WAIT_TIME_MILLIS);
 		}
 	}
 
@@ -96,7 +96,7 @@ public class CrawlClass {
 					new File(Constants.RESOURCES_BASE_PATH,
 							"/class/second/count/" + FilenameUtils.getBaseName(file.getName()) + ".xml"),
 					xml, Constants.CHARSET);
-			Thread.sleep(Constants.WAIT_MILLIS);
+			Thread.sleep(Constants.WAIT_TIME_MILLIS);
 		}
 	}
 
