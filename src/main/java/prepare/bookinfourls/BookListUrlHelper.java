@@ -11,7 +11,7 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
-import crawl.bean.BookListUrl;
+import crawl.bookinfo.bean.BookListUrl;
 import prepare.secondclass.SecondClassReader;
 import prepare.secondclass.bean.SecondClass;
 import util.Constants;
@@ -41,7 +41,7 @@ public class BookListUrlHelper {
 			for (int i = 1; i <= totalPage; i++) {
 				String url = null;
 				try {
-					url = Constants.BASE_URL_EXTERNAL + "/opac/search?q=" + URLEncoder.encode(name, Constants.CHARSET)
+					url = Constants.BASE_URL + "/opac/search?q=" + URLEncoder.encode(name, Constants.CHARSET)
 							+ "&searchType=standard&isFacet=false&view=simple&searchWay=class&rows=" + pageSize
 							+ "&sortWay=score&sortOrder=desc&searchWay0=marc&logical0=AND&page=" + i;
 				} catch (UnsupportedEncodingException e) {

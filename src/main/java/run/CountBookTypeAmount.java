@@ -13,7 +13,7 @@ import prepare.secondclass.bean.SecondClass;
  * @author Administrator
  *
  */
-public class CountBookAmount {
+public class CountBookTypeAmount {
 
 	@Test
 	public void count() {

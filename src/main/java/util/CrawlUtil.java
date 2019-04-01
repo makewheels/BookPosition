@@ -11,18 +11,18 @@ public class CrawlUtil {
 	 */
 	public static String get(String url) {
 		if (lastRequestTime != -1) {
-			long currentTimeMillis = System.currentTimeMillis();
-			long diff = currentTimeMillis - lastRequestTime;
+			long diff = System.currentTimeMillis() - lastRequestTime;
 			if (diff <= Constants.WAIT_TIME_MILLIS) {
 				try {
-					System.out.println("wait for " + diff + "ms");
-					Thread.sleep(diff);
+					long waitMillis = Constants.WAIT_TIME_MILLIS - diff;
+					System.out.println("wait for " + waitMillis + " ms");
+					Thread.sleep(waitMillis);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
-			lastRequestTime = System.currentTimeMillis();
 		}
+		lastRequestTime = System.currentTimeMillis();
 		return HttpUtil.get(url);
 	}
 

@@ -1,4 +1,4 @@
-package crawl;
+package prepare.firstclass;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +23,7 @@ import util.HttpUtil;
  * @author Administrator
  *
  */
-public class CrawlClass {
+public class CrawlFirstClass {
 	// 一级分类xml文件相对路径
 	private String fistClassFilePath = "/class/firstClass.xml";
 
@@ -34,7 +34,7 @@ public class CrawlClass {
 	 */
 	@Test
 	public void crawlFirstClass() throws IOException {
-		String firstClassXml = HttpUtil.get(Constants.BASE_URL_EXTERNAL + "/opac/browse/query?category=cls&id=0");
+		String firstClassXml = HttpUtil.get(Constants.BASE_URL + "/opac/browse/query?category=cls&id=0");
 		FileUtils.writeStringToFile(new File(Constants.RESOURCES_BASE_PATH, fistClassFilePath), firstClassXml,
 				Constants.CHARSET);
 	}
@@ -54,7 +54,7 @@ public class CrawlClass {
 		for (Element record : elements) {
 			String secondClassId = record.element("id").getText();
 			String secondClassXml = HttpUtil
-					.get(Constants.BASE_URL_EXTERNAL + "/opac/browse/query?category=cls&id=" + secondClassId);
+					.get(Constants.BASE_URL + "/opac/browse/query?category=cls&id=" + secondClassId);
 			FileUtils.writeStringToFile(
 					new File(Constants.RESOURCES_BASE_PATH + "/class/second/list/" + secondClassId + ".xml"),
 					secondClassXml, Constants.CHARSET);
@@ -90,7 +90,7 @@ public class CrawlClass {
 			Map<String, String> param = new HashMap<>();
 			param.put("category", "cls");
 			param.put("classnos", classnos.toString());
-			String xml = HttpUtil.post(Constants.BASE_URL_EXTERNAL + "/opac/browse/count", param);
+			String xml = HttpUtil.post(Constants.BASE_URL + "/opac/browse/count", param);
 			System.out.println(file.getName() + " " + xml);
 			FileUtils.writeStringToFile(
 					new File(Constants.RESOURCES_BASE_PATH,

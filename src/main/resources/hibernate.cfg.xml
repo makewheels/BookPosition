@@ -15,8 +15,9 @@
 		<property name="hibernate.hbm2ddl.auto">update</property>
 		<property name="hibernate.connection.autocommit">true</property>
 
-		<mapping class="crawl.bean.BookListUrl" />
+		<mapping class="crawl.bookinfo.bean.BookListUrl" />
 		<mapping class="crawl.bean.Book" />
+		<mapping class="crawl.bean.BarCode" />
 
 	</session-factory>
 </hibernate-configuration>

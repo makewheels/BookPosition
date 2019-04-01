@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * 书
+ * 一种书
  * 
  * @author Administrator
  *
@@ -30,7 +30,7 @@ public class Book {
 	private String publishDate;// 出版日期
 	private String type;// 文献类型
 	private String callno;// 索书号
-	private String barCode;// 条码号
+	private String holdingJson;// 发请求查到的holdingJson
 	private Date createDate;
 	private String fromUrl;
 
@@ -39,7 +39,7 @@ public class Book {
 	}
 
 	public Book(Integer id, String no, String isbn, String coverImageUrl, String name, String bookrecno, String author,
-			String publisher, String publishDate, String type, String callno, String barCode, Date createDate,
+			String publisher, String publishDate, String type, String callno, String holdingJson, Date createDate,
 			String fromUrl) {
 		super();
 		this.id = id;
@@ -53,7 +53,7 @@ public class Book {
 		this.publishDate = publishDate;
 		this.type = type;
 		this.callno = callno;
-		this.barCode = barCode;
+		this.holdingJson = holdingJson;
 		this.createDate = createDate;
 		this.fromUrl = fromUrl;
 	}
@@ -146,12 +146,12 @@ public class Book {
 		this.callno = callno;
 	}
 
-	public String getBarCode() {
-		return barCode;
+	public String getHoldingJson() {
+		return holdingJson;
 	}
 
-	public void setBarCode(String barCode) {
-		this.barCode = barCode;
+	public void setHoldingJson(String holdingJson) {
+		this.holdingJson = holdingJson;
 	}
 
 	public Date getCreateDate() {
@@ -174,7 +174,8 @@ public class Book {
 	public String toString() {
 		return "Book [id=" + id + ", no=" + no + ", isbn=" + isbn + ", coverImageUrl=" + coverImageUrl + ", name="
 				+ name + ", bookrecno=" + bookrecno + ", author=" + author + ", publisher=" + publisher
-				+ ", publishDate=" + publishDate + ", type=" + type + ", callno=" + callno + ", barCode=" + barCode
-				+ ", createDate=" + createDate + ", fromUrl=" + fromUrl + "]";
+				+ ", publishDate=" + publishDate + ", type=" + type + ", callno=" + callno + ", holdingJson="
+				+ holdingJson + ", createDate=" + createDate + ", fromUrl=" + fromUrl + "]";
 	}
+
 }

@@ -9,11 +9,11 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.junit.Test;
 
-import crawl.BookHelper;
 import crawl.bean.Book;
-import crawl.bean.BookListUrl;
+import crawl.bookinfo.bean.BookListUrl;
+import crawl.util.BookHelper;
+import crawl.util.UrlReader;
 import us.codecraft.xsoup.Xsoup;
 import util.Constants;
 import util.CrawlUtil;
@@ -34,7 +34,7 @@ public class CrawlBookInfo {
 	 * @param html
 	 */
 	@SuppressWarnings("unchecked")
-	private List<Book> parseHtmlToBookList(String html) {
+	private static List<Book> parseHtmlToBookList(String html) {
 		Elements trs = Xsoup.select(html, "//*[@id=\"resultTile\"]/div[2]/table/tbody").getElements().get(0).children();
 		List<Book> bookList = new ArrayList<>();
 		for (Element tr : trs) {
@@ -75,7 +75,7 @@ public class CrawlBookInfo {
 		bookrecnos.deleteCharAt(bookrecnos.length() - 1);
 		String xml = null;
 		try {
-			xml = CrawlUtil.get(Constants.BASE_URL_EXTERNAL + "/opac/book/callnos?bookrecnos="
+			xml = CrawlUtil.get(Constants.BASE_URL + "/opac/book/callnos?bookrecnos="
 					+ URLEncoder.encode(bookrecnos.toString(), Constants.CHARSET));
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
@@ -94,10 +94,6 @@ public class CrawlBookInfo {
 				}
 			}
 		}
-		// 根据recno查条码号
-//		for (Book book : bookList) {
-//			book.setBarCode(BookHelper.getBarCodeByRecno(book.getBookrecno()));
-//		}
 		return bookList;
 
 	}
@@ -105,8 +101,7 @@ public class CrawlBookInfo {
 	/**
 	 * 爬书的列表页
 	 */
-	@Test
-	public void crawl() {
+	public static void main(String[] args) {
 		int pageCount = 0;
 		int bookCount = 0;
 		// 拿到未爬的url列表
@@ -123,15 +118,33 @@ public class CrawlBookInfo {
 				// 保存book
 				book.setCreateDate(new Date());
 				book.setFromUrl(url);
+				System.out.println(book.getName());
 				HibernateUtil.save(book);
 				bookCount++;
-				// 更新bookListUrl
 				bookListUrl.setIsCrawled(true);
 				bookListUrl.setCrawlDate(new Date());
-				HibernateUtil.update(bookListUrl);
 			}
+			// 更新bookListUrl
+			HibernateUtil.update(bookListUrl);
+			// 异步更新每一个book在数据库中的holdingjson
+			new Thread() {
+				@Override
+				public void run() {
+					for (Book book : bookList) {
+						BookHelper.updateHoldingJson(book);
+						HibernateUtil.update(book);
+					}
+				}
+			}.start();
+			// 进度信息
 			pageCount++;
-			System.err.println("pageCount = " + pageCount + " bookCount = " + bookCount);
+			int totalPageAmount = 906;
+			int currentPageId = bookListUrl.getId();
+			String percent = String.format("%.2f", currentPageId * 1.0 / totalPageAmount * 100) + "%";
+			int restPageAmount = totalPageAmount - currentPageId;
+			int remainMinutes = (int) (restPageAmount * 2 * Constants.WAIT_TIME_MILLIS) / 1000 / 60;
+			System.err.println(percent + " remain=" + remainMinutes + " page(" + currentPageId + "/" + restPageAmount
+					+ ")" + " pageCount=" + pageCount + " bookCount=" + bookCount);
 		}
 	}
 
