@@ -49,14 +49,12 @@ public class CrawlBookPosition {
 				executorService.submit(new Runnable() {
 					@Override
 					public void run() {
-						synchronized (CrawlBookPosition.class) {
-							String html = BookHelper.getPositionHtml(barCodeString);
-							String position = BookHelper.parsePositionFromHtml(html);
-							barCode.setPosition(position);
-							HibernateUtil.update(barCode);
-							System.err.println(
-									Thread.currentThread().getName() + " " + barCode.getId() + " " + barCodeString);
-						}
+						String html = BookHelper.getPositionHtml(barCodeString);
+						String position = BookHelper.parsePositionFromHtml(html);
+						barCode.setPosition(position);
+						HibernateUtil.update(barCode);
+						System.err.println(
+								Thread.currentThread().getName() + " " + barCode.getId() + " " + barCodeString);
 					}
 				});
 			}

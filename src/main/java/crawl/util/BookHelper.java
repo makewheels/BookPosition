@@ -56,11 +56,11 @@ public class BookHelper {
 		} else {
 			List<String> barCodeJsonList = new ArrayList<>();
 			for (int i = 0; i < holdingList.size(); i++) {
-				String json = holdingList.get(i).getAsJsonObject().getAsString();
+				String json = holdingList.get(i).toString();
 				barCodeJsonList.add(json);
 			}
+			return barCodeJsonList;
 		}
-		return null;
 	}
 
 	/**

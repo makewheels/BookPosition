@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.query.Query;
-import org.junit.Test;
 
 import com.alibaba.fastjson.JSON;
 
@@ -26,7 +25,6 @@ public class GenerateBarCode {
 	/**
 	 * 根据数据库中book已保存的holdingJson，解析出条码号，保存到barcode表中
 	 */
-	@Test
 	public static void generateByDatabase() {
 		// 查总数
 		Session session = HibernateUtil.getSession();
@@ -52,6 +50,10 @@ public class GenerateBarCode {
 				}
 				// 通过book中的holdingJson解析出barCode的json列表
 				List<String> barCodeJsonList = BookHelper.getBarCodeList(book);
+				// 如果没有holdingList，则跳过
+				if (barCodeJsonList == null || barCodeJsonList.isEmpty()) {
+					continue;
+				}
 				// 遍历json列表
 				for (String barCodeJson : barCodeJsonList) {
 					// 解析出每一个条码号
@@ -64,6 +66,10 @@ public class GenerateBarCode {
 				}
 			}
 		}
+	}
+
+	public static void main(String[] args) {
+		generateByDatabase();
 	}
 
 }

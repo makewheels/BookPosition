@@ -48,12 +48,9 @@ public class CrawlBookHoldingJson {
 				executorService.submit(new Runnable() {
 					@Override
 					public void run() {
-						synchronized (CrawlBookHoldingJson.class) {
-							BookHelper.updateHoldingJson(book);
-							HibernateUtil.update(book);
-							System.err.println(Thread.currentThread().getName() + " " + book.getId());
-
-						}
+						BookHelper.updateHoldingJson(book);
+						HibernateUtil.update(book);
+						System.err.println(Thread.currentThread().getName() + " " + book.getId());
 					}
 				});
 			}
