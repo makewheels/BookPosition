@@ -12,9 +12,11 @@ public class Constants {
 	// 等待时间
 	public static long WAIT_TIME_MILLIS = 7000;
 	// 超时时间
-	public static int TIME_OUT_MILLIS = 200000;
+	public static int TIME_OUT_MILLIS = 15000;
 	// 重试次数
 	public static int RETRY_TIMES = 3;
+	// 多线程数量
+	public static int THREAD_AMOUNT = 6;
 	// 本地资源根目录
 	public static String RESOURCES_BASE_PATH = "D:\\workSpace\\sts\\BookPosition\\src\\main\\resources";
 	// 外网
@@ -22,6 +24,6 @@ public class Constants {
 	// 内网查询图书定位
 	public static String BASE_URL_INTERNAL_QUERY_LOCATION = "http://10.0.15.12/TSDW/GotoFlash.aspx?szBarCode=";
 	// 外网图书简单详情，返回html
-	public static String SIMPLE_URL_START = BASE_URL + "/opac/book/";
-	public static String SIMPLE_URL_END = "?view=simple";
+	public static String SIMPLE_INFO_URL_START = BASE_URL + "/opac/book/";
+	public static String SIMPLE_INFO_URL_END = "?view=simple";
 }
