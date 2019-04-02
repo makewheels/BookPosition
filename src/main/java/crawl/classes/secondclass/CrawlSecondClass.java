@@ -29,7 +29,7 @@ public class CrawlSecondClass {
 	 */
 	@Test
 	@SuppressWarnings("unchecked")
-	public void crawlSecondClass() throws IOException, DocumentException, InterruptedException {
+	public void crawlList() throws IOException, DocumentException, InterruptedException {
 		Document firstClassDocument = new SAXReader()
 				.read(new File(Constants.RESOURCES_BASE_PATH, CrawlFirstClass.FIRST_CLASS_FILE_PATH));
 		List<Element> elements = firstClassDocument.getRootElement().elements();
@@ -54,7 +54,7 @@ public class CrawlSecondClass {
 	 */
 	@Test
 	@SuppressWarnings("unchecked")
-	public void crawlSecondClassAmount() throws DocumentException, IOException, InterruptedException {
+	public void crawlAmount() throws DocumentException, IOException, InterruptedException {
 		// 所有二级分类xml文件
 		File[] listFiles = new File(Constants.RESOURCES_BASE_PATH, "/class/second/list").listFiles();
 		// 遍历每一个文件

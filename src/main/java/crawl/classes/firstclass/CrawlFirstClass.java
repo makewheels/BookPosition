@@ -26,7 +26,7 @@ public class CrawlFirstClass {
 	 * @throws IOException
 	 */
 	@Test
-	public void crawlFirstClass() throws IOException {
+	public void crawlList() throws IOException {
 		String firstClassXml = HttpUtil.get(Constants.BASE_URL + "/opac/browse/query?category=cls&id=0");
 		FileUtils.writeStringToFile(new File(Constants.RESOURCES_BASE_PATH, FIRST_CLASS_FILE_PATH), firstClassXml,
 				Constants.CHARSET);
@@ -38,7 +38,7 @@ public class CrawlFirstClass {
 	 * @throws IOException
 	 */
 	@Test
-	public void crawlFirstClassAmount() throws IOException {
+	public void crawlAmount() throws IOException {
 		Map<String, String> param = new HashMap<>();
 		param.put("category", "cls");
 		param.put("classnos", "A]]B]]C]]D]]E]]F]]G]]H]]I]]J]]K]]N]]O]]P]]Q]]R]]S]]T]]U]]V]]X]]Z");
