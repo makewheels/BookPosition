@@ -5,6 +5,8 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
@@ -126,9 +128,9 @@ public class CrawlBookList {
 			}
 			// 更新bookListUrl
 			HibernateUtil.update(bookListUrl);
-			// 异步更新每一个book在数据库中的holdingjson
-			
-			new Thread() {
+			// 多线程异步更新每一个book在数据库中的holdingjson
+			ExecutorService executorService = Executors.newFixedThreadPool(Constants.THREAD_AMOUNT);
+			executorService.submit(new Runnable() {
 				@Override
 				public void run() {
 					for (Book book : bookList) {
@@ -136,7 +138,8 @@ public class CrawlBookList {
 						HibernateUtil.update(book);
 					}
 				}
-			}.start();
+			});
+			executorService.shutdown();
 			// 进度信息
 			pageCount++;
 			int totalPageAmount = 906;
