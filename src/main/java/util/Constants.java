@@ -16,7 +16,9 @@ public class Constants {
 	// 重试次数
 	public static int RETRY_TIMES = 3;
 	// 多线程数量
-	public static int THREAD_AMOUNT = 5;
+	public static int THREAD_AMOUNT = 7;
+	// 最大并发任务数量
+	public static long MAX_MISSION_AMOUNT = 200;
 	// 本地资源根目录
 	public static String RESOURCES_BASE_PATH = "D:\\workSpace\\sts\\BookPosition\\src\\main\\resources";
 	// 外网

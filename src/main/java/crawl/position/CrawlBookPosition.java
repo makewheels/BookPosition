@@ -22,6 +22,9 @@ import util.HibernateUtil;
  */
 public class CrawlBookPosition {
 
+	// 当前任务总数
+//	private static long currentMissionCount = 0;
+
 	public static void main(String[] args) {
 		// 查总数
 		Session session = HibernateUtil.getSession();
@@ -40,34 +43,45 @@ public class CrawlBookPosition {
 			query.setFirstResult(i * maxResult);
 			query.setMaxResults(maxResult);
 			List<BarCode> barCodeList = query.list();
-			// 遍历每一个BarCode
+			// 遍历每一个BarCode，查图书定位
 			for (BarCode barCode : barCodeList) {
 				String barCodeString = barCode.getBarCode();
 				// 如果没有条码号就跳过
 				if (StringUtils.isEmpty(barCodeString)) {
 					continue;
 				}
-				// 查图书定位
+				// 如果当前任务总数，大于最大并发任务数，则等待
+//				while (currentMissionCount > Constants.MAX_MISSION_AMOUNT) {
+//					;
+//				}
+				// 提交任务
 				executorService.submit(new Runnable() {
 					@Override
 					public void run() {
-						String html = BookHelper.getPositionHtml(barCodeString);
-						String position = StringUtils.substringBetween(html, "var strWZxxxxxx = \"", "\";");
-						String message = StringUtils.substringBetween(html, "var strMsg = \"", "\";");
-						if (BookHelper.isDaqingLibarayBarCode(barCode) == false) {
-							System.err.println(Thread.currentThread().getName() + " IS NOT DQLIB BOOK! barCodeId="
-									+ barCodeString);
-							return;
+						// 如果是大庆市图书馆的书
+						if (BookHelper.isDaqingLibarayBarCode(barCode)) {
+							// 发请求
+							String html = BookHelper.getPositionHtml(barCodeString);
+							// 解析
+							String position = StringUtils.substringBetween(html, "var strWZxxxxxx = \"", "\";");
+							String message = StringUtils.substringBetween(html, "var strMsg = \"", "\";");
+							// 更新数据库
+							barCode.setPosition(position);
+							barCode.setMessage(message);
+							barCode.setGetPositionDate(new Date());
+							HibernateUtil.update(barCode);
+							System.err.println(Thread.currentThread().getName() + " barCodeId=" + barCode.getId()
+									+ " barCode=" + barCodeString + " position=" + barCode.getPosition() + " message="
+									+ barCode.getMessage() + ".END");
 						}
-						barCode.setPosition(position);
-						barCode.setMessage(message);
-						barCode.setGetPositionDate(new Date());
-						HibernateUtil.update(barCode);
-						System.out.println(Thread.currentThread().getName() + " barCodeId=" + barCode.getId()
-								+ " barCodeString=" + barCodeString + " position=" + barCode.getPosition() + " message="
-								+ barCode.getMessage() + ".END");
+						// 任务执行完成
+//						currentMissionCount--;
+//						System.out.println("mission finish:" + currentMissionCount);
 					}
 				});
+				// 下达任务完成
+//				currentMissionCount++;
+//				System.err.println("add mission:" + currentMissionCount);
 			}
 		}
 		executorService.shutdown();
