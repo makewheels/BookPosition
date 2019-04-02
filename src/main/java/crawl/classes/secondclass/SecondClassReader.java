@@ -1,4 +1,4 @@
-package prepare.secondclass;
+package crawl.classes.secondclass;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.dom4j.Element;
 
-import prepare.secondclass.bean.SecondClass;
+import crawl.classes.secondclass.bean.SecondClass;
 import util.Constants;
 import util.XmlParser;
 

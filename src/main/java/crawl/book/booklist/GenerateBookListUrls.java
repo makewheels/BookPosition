@@ -1,4 +1,4 @@
-package prepare.bookinfourls;
+package crawl.book.booklist;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,19 +11,19 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
-import crawl.bookinfo.bean.BookListUrl;
-import prepare.secondclass.SecondClassReader;
-import prepare.secondclass.bean.SecondClass;
+import crawl.book.booklist.bean.BookListUrl;
+import crawl.classes.secondclass.SecondClassReader;
+import crawl.classes.secondclass.bean.SecondClass;
 import util.Constants;
 import util.HibernateUtil;
 
 /**
- * 详情页的url列表
+ * 生成详情页的url列表
  * 
  * @author Administrator
  *
  */
-public class BookListUrlHelper {
+public class GenerateBookListUrls {
 	private static int pageSize = 200;
 
 	/**
@@ -73,6 +73,9 @@ public class BookListUrlHelper {
 	}
 
 	public static void main(String[] args) {
-		saveToDatabase();
+		List<String> urlList = getUrlList();
+		for (String string : urlList) {
+			System.out.println(string);
+		}
 	}
 }

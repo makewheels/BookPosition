@@ -10,10 +10,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import crawl.bean.BarCode;
-import crawl.bean.BarCodeDetail;
-import crawl.bean.Book;
-import crawl.bean.Position;
+import crawl.book.barcode.bean.BarCode;
+import crawl.book.barcode.bean.BarCodeDetail;
+import crawl.book.bean.Book;
+import crawl.position.bean.Position;
 import util.Constants;
 import util.HttpUtil;
 

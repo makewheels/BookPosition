@@ -1,4 +1,4 @@
-package crawl.bookinfo;
+package crawl.book.holdingjson;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
-import crawl.bean.Book;
+import crawl.book.bean.Book;
 import crawl.util.BookHelper;
 import util.Constants;
 import util.HibernateUtil;

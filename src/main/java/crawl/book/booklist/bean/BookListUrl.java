@@ -1,4 +1,4 @@
-package crawl.bookinfo.bean;
+package crawl.book.booklist.bean;
 
 import java.util.Date;
 

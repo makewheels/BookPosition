@@ -1,4 +1,4 @@
-package prepare.secondclass;
+package crawl.classes.secondclass;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +14,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.junit.Test;
 
-import prepare.firstclass.CrawlFirstClass;
+import crawl.classes.firstclass.CrawlFirstClass;
 import util.Constants;
 import util.HttpUtil;
 

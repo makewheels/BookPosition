@@ -1,4 +1,4 @@
-package crawl.bookinfo;
+package crawl.book.booklist;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -10,23 +10,23 @@ import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import crawl.bean.Book;
-import crawl.bookinfo.bean.BookListUrl;
+import crawl.book.bean.Book;
+import crawl.book.booklist.bean.BookListUrl;
+import crawl.book.booklist.util.UrlReader;
 import crawl.util.BookHelper;
-import crawl.util.UrlReader;
+import proxy.util.CrawlUtil;
 import us.codecraft.xsoup.Xsoup;
 import util.Constants;
-import util.CrawlUtil;
 import util.HibernateUtil;
 import util.XmlParser;
 
 /**
- * 爬书详情
+ * 爬书列表
  * 
  * @author Administrator
  *
  */
-public class CrawlBookInfo {
+public class CrawlBookList {
 
 	/**
 	 * 从html解析出book列表
@@ -127,6 +127,7 @@ public class CrawlBookInfo {
 			// 更新bookListUrl
 			HibernateUtil.update(bookListUrl);
 			// 异步更新每一个book在数据库中的holdingjson
+			
 			new Thread() {
 				@Override
 				public void run() {

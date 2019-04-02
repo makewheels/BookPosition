@@ -1,4 +1,4 @@
-package crawl.bean;
+package crawl.book.barcode.bean;
 
 import java.util.Date;
 

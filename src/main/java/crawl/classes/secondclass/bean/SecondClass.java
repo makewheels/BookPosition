@@ -1,4 +1,4 @@
-package prepare.secondclass.bean;
+package crawl.classes.secondclass.bean;
 
 /**
  * 二级分类对象

@@ -1,4 +1,4 @@
-package crawl.util;
+package crawl.book.booklist.util;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,10 +9,16 @@ import org.apache.commons.io.FileUtils;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
-import crawl.bookinfo.bean.BookListUrl;
+import crawl.book.booklist.bean.BookListUrl;
 import util.Constants;
 import util.HibernateUtil;
 
+/**
+ * 读要爬的url列表
+ * 
+ * @author Administrator
+ *
+ */
 public class UrlReader {
 	private static List<String> urlList;
 

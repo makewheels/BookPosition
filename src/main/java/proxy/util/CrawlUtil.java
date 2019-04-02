@@ -1,4 +1,7 @@
-package util;
+package proxy.util;
+
+import util.Constants;
+import util.HttpUtil;
 
 public class CrawlUtil {
 	private static long lastRequestTime = -1;

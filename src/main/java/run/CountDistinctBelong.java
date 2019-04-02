@@ -8,8 +8,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
-import crawl.bean.BarCode;
-import crawl.bean.Position;
+import crawl.book.barcode.bean.BarCode;
+import crawl.position.bean.Position;
 import crawl.util.BookHelper;
 import util.HibernateUtil;
 

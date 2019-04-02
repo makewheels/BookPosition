@@ -1,4 +1,4 @@
-package proxy.util;
+package proxy;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

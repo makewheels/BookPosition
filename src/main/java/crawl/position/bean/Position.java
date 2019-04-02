@@ -1,4 +1,4 @@
-package crawl.bean;
+package crawl.position.bean;
 
 public class Position {
 	private String code;

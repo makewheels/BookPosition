@@ -1,4 +1,4 @@
-package crawl.bookinfo;
+package crawl.book.barcode;
 
 import java.util.Date;
 import java.util.List;
@@ -8,9 +8,9 @@ import org.hibernate.query.Query;
 
 import com.alibaba.fastjson.JSON;
 
-import crawl.bean.BarCode;
-import crawl.bean.BarCodeDetail;
-import crawl.bean.Book;
+import crawl.book.barcode.bean.BarCode;
+import crawl.book.barcode.bean.BarCodeDetail;
+import crawl.book.bean.Book;
 import crawl.util.BookHelper;
 import util.HibernateUtil;
 

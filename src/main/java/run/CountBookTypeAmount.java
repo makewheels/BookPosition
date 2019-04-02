@@ -6,8 +6,8 @@ import java.util.List;
 import org.dom4j.Element;
 import org.junit.Test;
 
-import prepare.secondclass.SecondClassReader;
-import prepare.secondclass.bean.SecondClass;
+import crawl.classes.secondclass.SecondClassReader;
+import crawl.classes.secondclass.bean.SecondClass;
 import util.Constants;
 import util.XmlParser;
 

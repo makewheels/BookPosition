@@ -1,4 +1,4 @@
-package prepare.firstclass;
+package crawl.classes.firstclass;
 
 import java.io.File;
 import java.io.IOException;

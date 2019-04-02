@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
-import crawl.bean.BarCode;
+import crawl.book.barcode.bean.BarCode;
 import crawl.util.BookHelper;
 import util.Constants;
 import util.HibernateUtil;
