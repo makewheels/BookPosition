@@ -3,6 +3,8 @@ package crawl.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.alibaba.fastjson.JSON;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -11,6 +13,7 @@ import com.google.gson.JsonParser;
 import crawl.bean.BarCode;
 import crawl.bean.BarCodeDetail;
 import crawl.bean.Book;
+import crawl.bean.Position;
 import util.Constants;
 import util.HttpUtil;
 
@@ -94,4 +97,21 @@ public class BookHelper {
 		return false;
 	}
 
+	/**
+	 * 从爬虫请求得到的变量中，解析出position对象
+	 * 
+	 * @param position
+	 * @return
+	 */
+	public static Position parsePositionFromString(String position) {
+		if (StringUtils.isEmpty(position)) {
+			return null;
+		}
+		String[] split1 = position.split("\\|");
+		String code = split1[0];
+		String[] split2 = split1[1].split(" ");
+		String belong = split2[0];
+		String detail = split2[1];
+		return new Position(code, belong, detail);
+	}
 }
