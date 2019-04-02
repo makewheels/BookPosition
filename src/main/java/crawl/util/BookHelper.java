@@ -3,8 +3,6 @@ package crawl.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -71,16 +69,6 @@ public class BookHelper {
 	 */
 	public static String getPositionHtml(String barCode) {
 		return HttpUtil.get(Constants.BASE_URL_INTERNAL_QUERY_LOCATION + barCode);
-	}
-
-	/**
-	 * 从内网请求的html中，解析出图书定位信息
-	 * 
-	 * @param html
-	 * @return
-	 */
-	public static String parsePositionFromHtml(String html) {
-		return StringUtils.substringBetween(html, "var strWZxxxxxx = \"", "\";");
 	}
 
 }

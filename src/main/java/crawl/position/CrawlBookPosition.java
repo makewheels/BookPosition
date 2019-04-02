@@ -1,5 +1,6 @@
 package crawl.position;
 
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -24,7 +25,8 @@ public class CrawlBookPosition {
 	public static void main(String[] args) {
 		// 查总数
 		Session session = HibernateUtil.getSession();
-		Long missionAmount = session.createQuery("select count(*) from BarCode", Long.class).getSingleResult();
+		Long missionAmount = session.createQuery("select count(*) from BarCode where position=NULL", Long.class)
+				.getSingleResult();
 		// 分页查询
 		// 每页多少个
 		int maxResult = 1000;
@@ -34,7 +36,7 @@ public class CrawlBookPosition {
 		ExecutorService executorService = Executors.newFixedThreadPool(Constants.THREAD_AMOUNT);
 		for (int i = 0; i < totalPage + 1; i++) {
 			// 逐页查询
-			Query<BarCode> query = session.createQuery("from BarCode", BarCode.class);
+			Query<BarCode> query = session.createQuery("from BarCode where position=NULL", BarCode.class);
 			query.setFirstResult(i * maxResult);
 			query.setMaxResults(maxResult);
 			List<BarCode> barCodeList = query.list();
@@ -50,11 +52,15 @@ public class CrawlBookPosition {
 					@Override
 					public void run() {
 						String html = BookHelper.getPositionHtml(barCodeString);
-						String position = BookHelper.parsePositionFromHtml(html);
+						String position = StringUtils.substringBetween(html, "var strWZxxxxxx = \"", "\";");
+						String message = StringUtils.substringBetween(html, "var strMsg = \"", "\";");
 						barCode.setPosition(position);
+						barCode.setMessage(message);
+						barCode.setGetPositionDate(new Date());
 						HibernateUtil.update(barCode);
-						System.err.println(
-								Thread.currentThread().getName() + " " + barCode.getId() + " " + barCodeString);
+						System.out.println(barCode);
+						System.err.println(Thread.currentThread().getName() + " barCodeId=" + barCode.getId()
+								+ " missionAmount=" + missionAmount);
 					}
 				});
 			}

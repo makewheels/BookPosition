@@ -60,7 +60,7 @@ public class GenerateBarCode {
 					BarCodeDetail barCodeDetail = JSON.parseObject(barCodeJson, BarCodeDetail.class);
 					String barcode = barCodeDetail.getBarcode();
 					// 保存barCode
-					BarCode barCode = new BarCode(null, book.getBookrecno(), barcode, null, new Date(), null,
+					BarCode barCode = new BarCode(null, book.getBookrecno(), barcode, null, null, new Date(), null,
 							barCodeJson);
 					HibernateUtil.save(barCode);
 				}

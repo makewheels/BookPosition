@@ -22,7 +22,8 @@ public class BarCode {
 	private Integer id;
 	private String bookrecno;// 书的种类，父id
 	private String barCode;// 条码号
-	private String position;// 图书定位
+	private String position;// 通过爬虫解析：strWZxxxxxx，图书定位
+	private String message;// 通过爬虫解析：msg，是否在馆的信息
 	private Date createDate;// 创建时间
 	private Date getPositionDate;// 获得定位时间
 	private String json;// 属于这本书的json信息
@@ -31,13 +32,14 @@ public class BarCode {
 		super();
 	}
 
-	public BarCode(Integer id, String bookrecno, String barCode, String position, Date createDate, Date getPositionDate,
-			String json) {
+	public BarCode(Integer id, String bookrecno, String barCode, String position, String message, Date createDate,
+			Date getPositionDate, String json) {
 		super();
 		this.id = id;
 		this.bookrecno = bookrecno;
 		this.barCode = barCode;
 		this.position = position;
+		this.message = message;
 		this.createDate = createDate;
 		this.getPositionDate = getPositionDate;
 		this.json = json;
@@ -75,6 +77,14 @@ public class BarCode {
 		this.position = position;
 	}
 
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
 	public Date getCreateDate() {
 		return createDate;
 	}
@@ -102,7 +112,8 @@ public class BarCode {
 	@Override
 	public String toString() {
 		return "BarCode [id=" + id + ", bookrecno=" + bookrecno + ", barCode=" + barCode + ", position=" + position
-				+ ", createDate=" + createDate + ", getPositionDate=" + getPositionDate + ", json=" + json + "]";
+				+ ", message=" + message + ", createDate=" + createDate + ", getPositionDate=" + getPositionDate
+				+ ", json=" + json + "]";
 	}
 
 }
