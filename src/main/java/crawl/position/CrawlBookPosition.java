@@ -54,13 +54,18 @@ public class CrawlBookPosition {
 						String html = BookHelper.getPositionHtml(barCodeString);
 						String position = StringUtils.substringBetween(html, "var strWZxxxxxx = \"", "\";");
 						String message = StringUtils.substringBetween(html, "var strMsg = \"", "\";");
+						if (BookHelper.isDaqingLibarayBarCode(barCode) == false) {
+							System.err.println(Thread.currentThread().getName() + " IS NOT DQLIB BOOK! barCodeId="
+									+ barCodeString);
+							return;
+						}
 						barCode.setPosition(position);
 						barCode.setMessage(message);
 						barCode.setGetPositionDate(new Date());
 						HibernateUtil.update(barCode);
-						System.out.println(barCode);
-						System.err.println(Thread.currentThread().getName() + " barCodeId=" + barCode.getId()
-								+ " missionAmount=" + missionAmount);
+						System.out.println(Thread.currentThread().getName() + " barCodeId=" + barCode.getId()
+								+ " barCodeString=" + barCodeString + " position=" + barCode.getPosition() + " message="
+								+ barCode.getMessage() + ".END");
 					}
 				});
 			}

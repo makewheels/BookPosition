@@ -3,10 +3,13 @@ package crawl.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.fastjson.JSON;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import crawl.bean.BarCode;
+import crawl.bean.BarCodeDetail;
 import crawl.bean.Book;
 import util.Constants;
 import util.HttpUtil;
@@ -69,6 +72,26 @@ public class BookHelper {
 	 */
 	public static String getPositionHtml(String barCode) {
 		return HttpUtil.get(Constants.BASE_URL_INTERNAL_QUERY_LOCATION + barCode);
+	}
+
+	// 大庆市图书馆的orglocal数组
+	private static String[] daqingLibraryOrglocalArray = { "WX1", "WX2", "SETSG", "24TH" };
+
+	/**
+	 * 判断barCode是不是大庆市图书馆的书
+	 * 
+	 * @param barCode
+	 * @return
+	 */
+	public static boolean isDaqingLibarayBarCode(BarCode barCode) {
+		BarCodeDetail barCodeDetail = JSON.parseObject(barCode.getJson(), BarCodeDetail.class);
+		String orglocal = barCodeDetail.getOrglocal();
+		for (String each : daqingLibraryOrglocalArray) {
+			if (each.equals(orglocal)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }
