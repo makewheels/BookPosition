@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -15,6 +16,7 @@ import org.jsoup.select.Elements;
 import crawl.book.bean.Book;
 import crawl.book.booklist.bean.BookListUrl;
 import crawl.book.booklist.util.UrlReader;
+import crawl.util.BookDao;
 import crawl.util.BookHelper;
 import proxy.util.CrawlUtil;
 import us.codecraft.xsoup.Xsoup;
@@ -117,6 +119,12 @@ public class CrawlBookList {
 			List<Book> bookList = parseHtmlToBookList(html);
 			// 遍历每一个book
 			for (Book book : bookList) {
+				// 先根据bookrecno查数据库，看是不是已经有这本书了
+				List<Book> findBookList = BookDao.findBookByBookrecno(book.getBookrecno());
+				// 如果已经存在这本书，则跳过
+				if (CollectionUtils.isNotEmpty(findBookList)) {
+					continue;
+				}
 				// 保存book
 				book.setCreateDate(new Date());
 				book.setFromUrl(url);
@@ -130,15 +138,15 @@ public class CrawlBookList {
 			HibernateUtil.update(bookListUrl);
 			// 多线程异步更新每一个book在数据库中的holdingjson
 			ExecutorService executorService = Executors.newFixedThreadPool(Constants.THREAD_AMOUNT);
-			executorService.submit(new Runnable() {
-				@Override
-				public void run() {
-					for (Book book : bookList) {
+			for (Book book : bookList) {
+				executorService.submit(new Runnable() {
+					@Override
+					public void run() {
 						BookHelper.updateHoldingJson(book);
 						HibernateUtil.update(book);
 					}
-				}
-			});
+				});
+			}
 			executorService.shutdown();
 			// 进度信息
 			pageCount++;

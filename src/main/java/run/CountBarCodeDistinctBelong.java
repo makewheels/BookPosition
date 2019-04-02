@@ -13,7 +13,7 @@ import crawl.position.bean.Position;
 import crawl.util.BookHelper;
 import util.HibernateUtil;
 
-public class CountDistinctBelong {
+public class CountBarCodeDistinctBelong {
 
 	public static void main(String[] args) {
 		// 查总数

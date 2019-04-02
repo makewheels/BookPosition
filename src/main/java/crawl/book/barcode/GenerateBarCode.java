@@ -3,6 +3,7 @@ package crawl.book.barcode;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
@@ -11,6 +12,7 @@ import com.alibaba.fastjson.JSON;
 import crawl.book.barcode.bean.BarCode;
 import crawl.book.barcode.bean.BarCodeDetail;
 import crawl.book.bean.Book;
+import crawl.util.BarCodeDao;
 import crawl.util.BookHelper;
 import util.HibernateUtil;
 
@@ -59,6 +61,12 @@ public class GenerateBarCode {
 					// 解析出每一个条码号
 					BarCodeDetail barCodeDetail = JSON.parseObject(barCodeJson, BarCodeDetail.class);
 					String barcode = barCodeDetail.getBarcode();
+					// 先看看数据库中是否存在这个条码号
+					List<BarCode> findBarCodeList = BarCodeDao.findBarCodeByBarCodeString(barCodeDetail.getBarcode());
+					// 如果已经存在这个条码号，则跳过
+					if (CollectionUtils.isNotEmpty(findBarCodeList)) {
+						continue;
+					}
 					// 保存barCode
 					BarCode barCode = new BarCode(null, book.getBookrecno(), barcode, null, null, new Date(), null,
 							barCodeJson);
