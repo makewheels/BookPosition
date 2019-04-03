@@ -16,7 +16,7 @@ public class Constants {
 	// 重试次数
 	public static int RETRY_TIMES = 3;
 	// 多线程数量
-	public static int THREAD_AMOUNT = 7;
+	public static int THREAD_AMOUNT = 4;
 	// 最大并发任务数量
 	public static long MAX_MISSION_AMOUNT = 200;
 	// 本地资源根目录

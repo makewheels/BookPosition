@@ -8,10 +8,12 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import crawl.book.barcode.bean.BarCode;
 import crawl.util.BarCodeDao;
 import util.Constants;
+import util.HibernateUtil;
 
 /**
  * 删除重复barCode
@@ -39,6 +41,10 @@ public class DeleteRepeatedBarCode {
 		}
 		// 遍历重复的列表
 		for (String repeatedBarCode : repeatedBarCodeList) {
+			// 如果没有条码号，跳过
+			if (StringUtils.isEmpty(repeatedBarCode)) {
+				continue;
+			}
 			// 查询每一个重复的barCode
 			List<BarCode> findBarCodes = BarCodeDao.findBarCodeByBarCodeString(repeatedBarCode);
 			// 如果没有，或者只有一个，则跳过
@@ -54,8 +60,9 @@ public class DeleteRepeatedBarCode {
 			});
 			// 删除重复的
 			for (int i = 1; i < findBarCodes.size(); i++) {
-//				System.out.println(findBarCodes.get(i).getBarCode());
-//				HibernateUtil.delete(findBarCodes.get(i));
+				BarCode barCode = findBarCodes.get(i);
+				System.out.println("i=" + i + " " + barCode.getId() + " " + barCode.getBarCode());
+				HibernateUtil.delete(findBarCodes.get(i));
 			}
 		}
 	}

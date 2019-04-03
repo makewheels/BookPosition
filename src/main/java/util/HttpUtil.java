@@ -2,6 +2,7 @@ package util;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,12 +40,17 @@ public class HttpUtil {
 	 * @param url
 	 * @return
 	 */
-	public static String get(String url) {
-		System.out.println("HttpClient GET: " + url);
-		CloseableHttpClient client = HttpClients.createDefault();
-		HttpGet httpGet = new HttpGet(url);
+	private static CloseableHttpClient client = HttpClients.createDefault();
+	private static HttpGet httpGet = new HttpGet();
+	static {
 		httpGet.addHeader("User-Agent", userAgent);
 		httpGet.setHeader("Content-type", contentType);
+		httpGet.setHeader("Connection", "keep-alive");
+	}
+
+	public static String get(String url) {
+		System.out.println("HttpClient GET: " + url);
+		httpGet.setURI(URI.create(url));
 		CloseableHttpResponse response = null;
 		try {
 			response = client.execute(httpGet);
