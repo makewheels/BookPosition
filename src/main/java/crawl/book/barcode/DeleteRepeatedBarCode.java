@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
@@ -40,6 +42,8 @@ public class DeleteRepeatedBarCode {
 			return;
 		}
 		// 遍历重复的列表
+		// 多线程
+		ExecutorService executorService = Executors.newFixedThreadPool(Constants.THREAD_AMOUNT);
 		for (String repeatedBarCode : repeatedBarCodeList) {
 			// 如果没有条码号，跳过
 			if (StringUtils.isEmpty(repeatedBarCode)) {
@@ -58,13 +62,20 @@ public class DeleteRepeatedBarCode {
 					return b1.getId() - b2.getId();
 				}
 			});
-			// 删除重复的
-			for (int i = 1; i < findBarCodes.size(); i++) {
-				BarCode barCode = findBarCodes.get(i);
-				System.out.println("i=" + i + " " + barCode.getId() + " " + barCode.getBarCode());
-				HibernateUtil.delete(findBarCodes.get(i));
-			}
+			executorService.submit(new Runnable() {
+				@Override
+				public void run() {
+					// 删除重复的
+					for (int i = 1; i < findBarCodes.size(); i++) {
+						BarCode barCode = findBarCodes.get(i);
+						System.out.println(Thread.currentThread().getName() + " i=" + i + " " + barCode.getId() + " "
+								+ barCode.getBarCode());
+						HibernateUtil.delete(findBarCodes.get(i));
+					}
+				}
+			});
 		}
+		executorService.shutdown();
 	}
 
 	public static void main(String[] args) {
