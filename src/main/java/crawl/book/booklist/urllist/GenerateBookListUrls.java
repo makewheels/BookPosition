@@ -24,7 +24,7 @@ import util.HibernateUtil;
  *
  */
 public class GenerateBookListUrls {
-	private static int pageSize = 200;
+	private static int pageSize = 300;
 
 	/**
 	 * 返回url列表
@@ -73,9 +73,6 @@ public class GenerateBookListUrls {
 	}
 
 	public static void main(String[] args) {
-		List<String> urlList = getUrlList();
-		for (String string : urlList) {
-			System.out.println(string);
-		}
+		saveToDatabase();
 	}
 }

@@ -5,11 +5,11 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -17,7 +17,6 @@ import crawl.book.bean.Book;
 import crawl.book.booklist.urllist.UrlReader;
 import crawl.book.booklist.urllist.bean.BookListUrl;
 import crawl.util.BookDao;
-import crawl.util.BookHelper;
 import proxy.util.CrawlUtil;
 import us.codecraft.xsoup.Xsoup;
 import util.Constants;
@@ -108,6 +107,11 @@ public class CrawlBookList {
 	public static void main(String[] args) {
 		int pageCount = 0;
 		int bookCount = 0;
+		// 总页数
+		long totalPageAmount;
+		Session session = HibernateUtil.getSession();
+		Query<Long> query = session.createQuery("select count(*) from BookListUrl where isCrawled=false", Long.class);
+		totalPageAmount = query.uniqueResult();
 		// 拿到未爬的url列表
 		List<BookListUrl> bookListUrls = UrlReader.fromDatabase(false);
 		// 遍历每一个url
@@ -131,29 +135,28 @@ public class CrawlBookList {
 				System.out.println(book.getName());
 				HibernateUtil.save(book);
 				bookCount++;
-				bookListUrl.setIsCrawled(true);
-				bookListUrl.setCrawlDate(new Date());
 			}
 			// 更新bookListUrl
+			bookListUrl.setIsCrawled(true);
+			bookListUrl.setCrawlDate(new Date());
 			HibernateUtil.update(bookListUrl);
 			// 多线程异步更新每一个book在数据库中的holdingjson
-			ExecutorService executorService = Executors.newFixedThreadPool(Constants.THREAD_AMOUNT);
-			for (Book book : bookList) {
-				executorService.submit(new Runnable() {
-					@Override
-					public void run() {
-						BookHelper.updateHoldingJson(book);
-						HibernateUtil.update(book);
-					}
-				});
-			}
-			executorService.shutdown();
+//			ExecutorService executorService = Executors.newFixedThreadPool(Constants.THREAD_AMOUNT);
+//			for (Book book : bookList) {
+//				executorService.submit(new Runnable() {
+//					@Override
+//					public void run() {
+//						BookHelper.updateHoldingJson(book);
+//						HibernateUtil.update(book);
+//					}
+//				});
+//			}
+//			executorService.shutdown();
 			// 进度信息
 			pageCount++;
-			int totalPageAmount = 906;
 			int currentPageId = bookListUrl.getId();
 			String percent = String.format("%.2f", currentPageId * 1.0 / totalPageAmount * 100) + "%";
-			int restPageAmount = totalPageAmount - currentPageId;
+			int restPageAmount = (int) (totalPageAmount - currentPageId);
 			int remainMinutes = (int) (restPageAmount * 2 * Constants.WAIT_TIME_MILLIS) / 1000 / 60;
 			System.err.println(percent + " remain=" + remainMinutes + " page(" + currentPageId + "/" + restPageAmount
 					+ ")" + " pageCount=" + pageCount + " bookCount=" + bookCount);

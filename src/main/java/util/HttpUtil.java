@@ -34,21 +34,12 @@ public class HttpUtil {
 	private static String userAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36";
 	private static String contentType = "application/x-www-form-urlencoded";
 
-	/**
-	 * 发送get请求
-	 * 
-	 * @param url
-	 * @return
-	 */
-	private static CloseableHttpClient client = HttpClients.createDefault();
-	private static HttpGet httpGet = new HttpGet();
-	static {
+	public static String get(String url) {
+		CloseableHttpClient client = HttpClients.createDefault();
+		HttpGet httpGet = new HttpGet();
 		httpGet.addHeader("User-Agent", userAgent);
 		httpGet.setHeader("Content-type", contentType);
 		httpGet.setHeader("Connection", "keep-alive");
-	}
-
-	public static String get(String url) {
 		System.out.println("HttpClient GET: " + url);
 		httpGet.setURI(URI.create(url));
 		CloseableHttpResponse response = null;
