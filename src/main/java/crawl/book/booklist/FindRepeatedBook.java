@@ -1,4 +1,4 @@
-package run;
+package crawl.book.booklist;
 
 import java.util.HashSet;
 import java.util.List;
@@ -16,7 +16,7 @@ import util.HibernateUtil;
  * @author Administrator
  *
  */
-public class FindDuplicateBook {
+public class FindRepeatedBook {
 
 	public static void main(String[] args) {
 		// 查总数

@@ -72,4 +72,17 @@ public class HibernateUtil {
 		session.close();
 	}
 
+	/**
+	 * 删除对象
+	 * 
+	 * @param object
+	 */
+	public static void delete(Object object) {
+		Session session = sessionFactory.openSession();
+		Transaction transaction = session.beginTransaction();
+		session.delete(object);
+		transaction.commit();
+		session.close();
+	}
+
 }

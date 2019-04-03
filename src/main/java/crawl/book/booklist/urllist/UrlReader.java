@@ -1,4 +1,4 @@
-package crawl.book.booklist.util;
+package crawl.book.booklist.urllist;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +9,7 @@ import org.apache.commons.io.FileUtils;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
-import crawl.book.booklist.bean.BookListUrl;
+import crawl.book.booklist.urllist.bean.BookListUrl;
 import util.Constants;
 import util.HibernateUtil;
 

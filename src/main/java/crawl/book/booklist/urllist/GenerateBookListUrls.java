@@ -1,4 +1,4 @@
-package crawl.book.booklist;
+package crawl.book.booklist.urllist;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,7 +11,7 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
-import crawl.book.booklist.bean.BookListUrl;
+import crawl.book.booklist.urllist.bean.BookListUrl;
 import crawl.classes.secondclass.SecondClassReader;
 import crawl.classes.secondclass.bean.SecondClass;
 import util.Constants;

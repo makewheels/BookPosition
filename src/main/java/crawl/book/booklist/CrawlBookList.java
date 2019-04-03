@@ -14,8 +14,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import crawl.book.bean.Book;
-import crawl.book.booklist.bean.BookListUrl;
-import crawl.book.booklist.util.UrlReader;
+import crawl.book.booklist.urllist.UrlReader;
+import crawl.book.booklist.urllist.bean.BookListUrl;
 import crawl.util.BookDao;
 import crawl.util.BookHelper;
 import proxy.util.CrawlUtil;

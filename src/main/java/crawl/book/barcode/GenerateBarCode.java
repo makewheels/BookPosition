@@ -60,7 +60,8 @@ public class GenerateBarCode {
 				for (String barCodeJson : barCodeJsonList) {
 					// 解析出每一个条码号
 					BarCodeDetail barCodeDetail = JSON.parseObject(barCodeJson, BarCodeDetail.class);
-					String barcode = barCodeDetail.getBarcode();
+					// 在保存前，就去除前后空格
+					String barcode = barCodeDetail.getBarcode().trim();
 					// 先看看数据库中是否存在这个条码号
 					List<BarCode> findBarCodeList = BarCodeDao.findBarCodeByBarCodeString(barCodeDetail.getBarcode());
 					// 如果已经存在这个条码号，则跳过
